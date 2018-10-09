@@ -6,7 +6,7 @@ module.exports = {
   deploy: {
     production: {
       user: 'ubuntu',
-      host: 'ec2-18-184-16-205.eu-central-1.compute.amazonaws.com',
+      host: 'ec2-18-196-60-178.eu-central-1.compute.amazonaws.com',
       key: '~/.ssh/SSAD.pem',
       ref: 'origin/master',
       repo: 'git@github.com:harditsingh/SSAD.git',
