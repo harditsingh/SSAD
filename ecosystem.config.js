@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'SSAD',
-    script: './index.js'
+    script: './server.js'
   }],
   deploy: {
     production: {
