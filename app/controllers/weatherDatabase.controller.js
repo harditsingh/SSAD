@@ -110,7 +110,7 @@ function saveToDatabase() {
 }
 
 exports.getLatestStations = (req, res) => {
-    res.send(windDirectionList);
+    res.send(stationList);
 }
 
 exports.getStationInformation = (req, res) => {
