@@ -6,7 +6,11 @@ const EmergencyForm = mongoose.Schema({
     postcode: String,
     bldgNumber: String,
     emergencyType: String,
-    status: String //'Pending' or 'Solved'
+    status: String, //'Pending' or 'Solved'
+    location: {
+        latitude: Number,
+        longitude: Number
+    }
 }, {
 	timestamps: true
 });

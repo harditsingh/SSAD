@@ -1,4 +1,4 @@
-const APIController = require('./externalAPI.controller.js');
+const APIController = require('./weatherAPI.controller.js');
 const MeteringStations = require('../models/meteringStations.model.js');
 const WeatherInformation = require('../models/weatherInformation.model.js');
 
@@ -109,12 +109,30 @@ function saveToDatabase() {
     }
 }
 
+exports.updateDatabase = () => {
+    console.log('Updated WeatherDB');
+}
+
 exports.getLatestStations = (req, res) => {
     res.send(stationList);
 }
 
+exports.getAllStationInformation = (req, res) => {
+    WeatherInformation.find()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving stations"
+            });
+        });
+}
+
 exports.getStationInformation = (req, res) => {
-    WeatherInformation.find({stationID: req.params.stationID})
+    WeatherInformation.find({
+            stationID: req.params.stationID
+        })
         .then(station => {
             if (!station) {
                 return res.status(404).send({

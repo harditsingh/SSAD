@@ -1,8 +1,5 @@
 const Emergency = require('../models/emergencyForm.model.js');
-
-exports.test = () => {
-    console.log('Works!');
-}
+const SMSController = require('./sms.controller.js');
 
 exports.newEmergency = (req, res) => {
     if (!req.body.name) {
@@ -17,8 +14,18 @@ exports.newEmergency = (req, res) => {
         postcode: req.body.postcode,
         bldgNumber: req.body.bldgNumber,
         emergencyType: req.body.emergencyType,
+        location: req.body.location,
         status: "Pending"
     });
+
+    SMSController.sendSMSControler(
+        "Name: " + req.body.name +
+        "\nMobile Number: " + req.body.mobile +
+        "\nPostcode: " + req.body.postcode +
+        "\nBuilding Number: " + req.body.bldgNumber +
+        "\nEmergency Type: " + req.body.emergencyType +
+        "\nhttps://maps.google.com/?q=" + req.body.location.latitude + "," + req.body.location.longitude
+    );
 
     emergency.save()
         .then(data => {
@@ -62,29 +69,20 @@ exports.findOne = (req, res) => {
         });
 };
 
-exports.setEmergencyToSolved = (req, res) => {
-    Emergency.findByIdAndUpdate(req.params.emergencyID, {
-        status: "Solved"
-    }, {
-        new: true
-    })
-    .then(emergency => {
-        if (!emergency) {
-            return res.status(404).send({
-                message: "Emergency not found with id " + req.params.emergencyID
-            });
-        }
-        res.send(emergency);
-    }).catch(err => {
-        if (err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Emergency not found with id " + req.params.emergencyID
-            });
-        }
-        return res.status(500).send({
-            message: "Error updating emergency with id " + req.params.emergencyId
-        });
-    });
+exports.setEmergencyToSolved = (receivedName) => {
+    Emergency.findOneAndUpdate({
+            name: receivedName
+        }, {
+            $set: {
+                status: "Solved"
+            }
+        }, {
+            upsert: true
+        }, function (err, doc) {
+            if (err) {
+                throw err;
+            }
+        })
 };
 
 
@@ -98,12 +96,13 @@ exports.updateEmergency = (req, res) => {
 
     // Find emergency and update it with the request body
     Emergency.findByIdAndUpdate(req.params.emergencyID, {
-        name: req.body.name,
-        mobile: req.body.mobile,
-        postcode: req.body.postcode,
-        bldgNumber: req.body.bldgNumber,
-        emergencyType: req.body.emergencyType,
-        status: req.body.status
+            name: req.body.name,
+            mobile: req.body.mobile,
+            postcode: req.body.postcode,
+            bldgNumber: req.body.bldgNumber,
+            emergencyType: req.body.emergencyType,
+            location: req.body.location,
+            status: req.body.status
         }, {
             new: true
         })
@@ -127,7 +126,7 @@ exports.updateEmergency = (req, res) => {
 };
 
 exports.deleteEmergency = (req, res) => {
-    Emergency.findByIdAndRemove(req.params.emergencyId)
+    Emergency.findByIdAndRemove(req.params.emergencyID)
         .then(emergency => {
             if (!emergency) {
                 return res.status(404).send({
