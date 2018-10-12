@@ -30,6 +30,6 @@ mongoose.connect(dbConfig.url, {
 
 require('./main.controller.js')(app);
 
-app.listen(1337, () => {
+app.listen(3000, () => {
 	console.log("Server is listening on port 3000");
 });
