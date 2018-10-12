@@ -5,7 +5,7 @@ module.exports = (app) => {
 	const SMSController = require('./app/controllers/sms.controller.js');
 	const EmailController = require('./app/controllers/emailAPI.controller.js');
 
-	const updateInterval = 10 * 1000;
+	const updateInterval = 30 * 60 * 1000;
 
 	// Initializing Databases
 	WeatherDBController.initialize();
@@ -34,6 +34,6 @@ module.exports = (app) => {
 	setInterval(function () {
 		WeatherDBController.updateDatabase();
 		PSIDBController.updateDatabase();
-		//EmailController.sendEmail("<b> I think it works! </b>");
+		EmailController.sendEmail("<b> This is where the report would go. </b>");
 	}, updateInterval);
 }
