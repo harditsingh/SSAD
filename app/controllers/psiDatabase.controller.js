@@ -23,6 +23,30 @@ exports.updateDatabase = () => {
     });
 }
 
+exports.getAllStationInformation = (req, res) => {
+    PSIInformation.find()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving information"
+            });
+        });
+}
+
+exports.getLatestStations = (req, res) => {
+    PSIStation.find()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving stations"
+            });
+        });
+}
+
 function saveStations(stationList) {
     stationList.forEach(element => {
         let station = new PSIStation({

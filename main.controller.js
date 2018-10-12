@@ -21,13 +21,15 @@ module.exports = (app) => {
 	app.post('/emergency', EmergencyController.newEmergency);
 	app.get('/getEmergencies', EmergencyController.findAll);
 	app.get('/getEmergency/:emergencyID', EmergencyController.findOne);
-	app.get('/emergencySolved/:emergencyID', EmergencyController.setEmergencyToSolved); //make it put
 	app.put('/emergency/:emergencyID', EmergencyController.updateEmergency);
 	app.delete('/emergency/:emergencyID', EmergencyController.deleteEmergency);
 
-	app.get('/stationsList', WeatherDBController.getLatestStations);
-	app.get('/stationInformation', WeatherDBController.getAllStationInformation);
-	app.get('/stationInformation/:stationID', WeatherDBController.getStationInformation);
+	app.get('/weatherStationsList', WeatherDBController.getLatestStations);
+	app.get('/weatherStationInformation', WeatherDBController.getAllStationInformation);
+	app.get('/weatherStationInformation/:stationID', WeatherDBController.getStationInformation);
+
+	app.get('/PSIStationsList', PSIDBController.getLatestStations);
+	app.get('/PSIStationInformation', PSIDBController.getAllStationInformation);
 
 	app.post('/processSMS', SMSController.processSMSResponse);
 
