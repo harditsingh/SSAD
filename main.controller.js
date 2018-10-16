@@ -1,6 +1,7 @@
 module.exports = (app) => {
 	const EmergencyController = require('./app/controllers/emergency.controller.js');
 	const WeatherDBController = require('./app/controllers/weatherDatabase.controller.js');
+	const DengueDBController = require('./app/controllers/dengueDatabase.controller.js');
 	const PSIDBController = require('./app/controllers/psiDatabase.controller.js');
 	const SMSController = require('./app/controllers/sms.controller.js');
 	const EmailController = require('./app/controllers/emailAPI.controller.js');
@@ -10,6 +11,7 @@ module.exports = (app) => {
 	// Initializing Databases
 	WeatherDBController.initialize();
 	PSIDBController.initialize();
+	DengueDBController.initialize();
 
 	// Setting up routes
 	app.get('/', (req, res) => {
@@ -31,11 +33,14 @@ module.exports = (app) => {
 	app.get('/PSIStationsList', PSIDBController.getLatestStations);
 	app.get('/PSIStationInformation', PSIDBController.getAllStationInformation);
 
+	app.get('/DengueInformation', DengueDBController.getAllStationInformation);
+
 	app.post('/processSMS', SMSController.processSMSResponse);
 
 	setInterval(function () {
 		WeatherDBController.updateDatabase();
 		PSIDBController.updateDatabase();
+		DengueDBController.updateDatabase();
 		EmailController.sendEmail("<b> This is where the report would go. </b>");
 	}, updateInterval);
 }

@@ -20,12 +20,11 @@ mongoose.connect(dbConfig.url, {
 	if (err) {
 		throw err;
 	}
-	console.log("Database created!");
 	db.dropCollection("meteringstations");
 	db.dropCollection("weatherinformations");
 	db.dropCollection("psistations");
 	db.dropCollection("psiinformations");
-	console.log("Collections cleared!");
+	db.dropCollection("dengueinformations");
 });
 
 require('./main.controller.js')(app);
@@ -33,3 +32,5 @@ require('./main.controller.js')(app);
 app.listen(3000, () => {
 	console.log("Server is listening on port 3000");
 });
+
+module.exports = app; // for testing

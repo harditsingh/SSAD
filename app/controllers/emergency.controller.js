@@ -88,7 +88,7 @@ exports.setEmergencyToSolved = (receivedName) => {
 
 exports.updateEmergency = (req, res) => {
     // Validate Request
-    if (!req.body.content) {
+    if (!req.body) {
         return res.status(400).send({
             message: "Emergency content can not be empty"
         });
