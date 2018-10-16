@@ -14,10 +14,8 @@ module.exports = (app) => {
 	DengueDBController.initialize();
 
 	// Setting up routes
-	app.get('/', (req, res) => {
-		res.json({
-			"message": "Hey, welcome to the RakunineCMS application! This isn't the right way to access it btw, read the API for more information."
-		});
+	app.get('/', function(req, res) {
+		res.sendFile(__dirname + '/public/index.html');
 	});
 
 	app.post('/emergency', EmergencyController.newEmergency);
