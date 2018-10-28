@@ -2,10 +2,31 @@ const Emergency = require('../models/emergencyForm.model.js');
 const SMSController = require('./sms.controller.js');
 
 exports.newEmergency = (req, res) => {
-    if (!req.body.name) {
+    /*if (!req.body.name) {
         return res.status(400).send({
             message: "Form content can not be empty"
         });
+    }*/
+
+    //Using Express-Validator to check for errors
+    req.checkBody('name').notEmpty().withMessage("Name is required").isAlpha().withMessage("Name should only contain alphabets");
+    req.checkBody('mobile').notEmpty().withMessage("Mobile is required").isMobilePhone("en-SG").withMessage("Mobile number should be valid");
+    req.checkBody('postcode').notEmpty().withMessage("Postal Code is required").isNumeric().withMessage("Postal Code must be numeric").isLength({ min: 6, max: 6 }).withMessage("Postal Code should be valid");
+    req.checkBody('bldgNumber').notEmpty().withMessage("Building Number is required").isString();
+    req.checkBody('emergencyType').notEmpty().withMessage("Emergency Type is required");
+    req.checkBody('location').notEmpty().withMessage("Location is required");
+
+    var errors = req.validationErrors();
+
+    //Returns error messages
+    if (errors) {
+        var errMsg = "";
+        for (x in errors) {
+            errMsg = errMsg.concat(' -').concat(errors[x].msg);
+        }
+        return res.status(400).send(
+            'Error:' + errMsg
+        );
     }
 
     const emergency = new Emergency({

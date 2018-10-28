@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 
 const app = express();
 
@@ -8,6 +9,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+app.use(expressValidator());
 
 const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');
