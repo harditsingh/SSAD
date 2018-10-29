@@ -34,8 +34,6 @@ require('./main.controller.js')(app);
 
 app.listen(3000, () => {
 	console.log("Server is listening on port 3000");
-}).catch(function onError(error) {
-    console.log(error);
-  });
+});
 
 module.exports = app; // for testing
