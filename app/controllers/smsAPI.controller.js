@@ -6,12 +6,18 @@ const EmergencyController = require('../controllers/emergency.controller.js');
 
 exports.processSMSResponse = (req, res) => {
     const twiml = new MessagingResponse();
-    console.log(req.body.Body);
-
+    
     let message = req.body.Body.split(' ');
-    console.log(message);
+    
     if (message[0] === "Solved") {
-        EmergencyController.setEmergencyToSolved(message[1]);
+        let str = req.body.Body;
+        let position = str.search(/Solved\s/i);
+
+        if (position == 0) {
+            str = str.substring(str.indexOf(" ") + 1, str.length);
+        }
+
+        EmergencyController.setEmergencyToSolved(str);
         twiml.message("Bravo captain!");
         res.writeHead(200, {
             'Content-Type': 'text/xml'
