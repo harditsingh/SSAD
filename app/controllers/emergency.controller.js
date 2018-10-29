@@ -2,12 +2,6 @@ const Emergency = require('../models/emergencyForm.model.js');
 const SMSController = require('./sms.controller.js');
 
 exports.newEmergency = (req, res) => {
-    /*if (!req.body.name) {
-        return res.status(400).send({
-            message: "Form content can not be empty"
-        });
-    }*/
-
     //Using Express-Validator to check for errors
     req.checkBody('name').notEmpty().withMessage("Name is required").isAlpha().withMessage("Name should only contain alphabets");
     req.checkBody('mobile').notEmpty().withMessage("Mobile is required").isMobilePhone("en-SG").withMessage("Mobile number should be valid");
@@ -22,10 +16,10 @@ exports.newEmergency = (req, res) => {
     if (errors) {
         var errMsg = "";
         for (x in errors) {
-            errMsg = errMsg.concat(' -').concat(errors[x].msg);
+            errMsg = errMsg.concat('\n-').concat(errors[x].msg);
         }
         return res.status(400).send(
-            'Error:' + errMsg
+            'Error 400: Invalid Input' + errMsg
         );
     }
 

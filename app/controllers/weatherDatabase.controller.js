@@ -8,6 +8,7 @@ let humidityList = null;
 let rainfallList = null;
 let windDirectionList = null;
 let windSpeedList = null;
+let stationListSaved = false;
 
 function concat(object1, object2) {
     object1.forEach(function (itm) {
@@ -86,31 +87,57 @@ exports.initialize = () => {
 function saveToDatabase() {
     if (temperatureList != null && humidityList != null && rainfallList != null && windDirectionList != null && windSpeedList != null) {
         stationList.forEach(currentStation => {
-            let newStation = new MeteringStations({
-                stationID: currentStation.id,
-                name: currentStation.name,
-                location: {
-                    latitude: currentStation.location.latitude,
-                    longitude: currentStation.location.longitude
-                }
-            });
-            newStation.save();
+            if (!stationListSaved) {
+                let newStation = new MeteringStations({
+                    stationID: currentStation.id,
+                    name: currentStation.name,
+                    location: {
+                        latitude: currentStation.location.latitude,
+                        longitude: currentStation.location.longitude
+                    }
+                });
+                newStation.save();
+                stationListSaved = true;
+            }
 
-            let weatherInformation = new WeatherInformation({
+            let weatherInformation = {
                 stationID: currentStation.id,
                 temperature: findElement(temperatureList, currentStation.id),
                 rainfall: findElement(rainfallList, currentStation.id),
                 humidity: findElement(humidityList, currentStation.id),
                 windDirection: findElement(windDirectionList, currentStation.id),
                 windSpeed: findElement(windSpeedList, currentStation.id)
-            });
-            weatherInformation.save();
+            };
+            saveWeatherInformation(weatherInformation);
         });
+        temperatureList = humidityList = rainfallList = windDirectionList = windSpeedList = null;
     }
+    
+}
+
+function saveWeatherInformation(weatherInformation) {
+    WeatherInformation.findOneAndUpdate({
+        stationID: weatherInformation.stationID
+    }, {
+        $set: {
+            stationID: weatherInformation.stationID,
+            temperature: weatherInformation.temperature,
+            rainfall: weatherInformation.rainfall,
+            humidity: weatherInformation.humidity,
+            windDirection: weatherInformation.windDirection,
+            windSpeed: weatherInformation.windSpeed
+        }
+    }, {
+        upsert: true
+    }, function (err, doc) {
+        if (err) {
+            throw err;
+        }
+    });
 }
 
 exports.updateDatabase = () => {
-    console.log('Updated WeatherDB');
+    this.initialize();
 }
 
 exports.getLatestStations = (req, res) => {
