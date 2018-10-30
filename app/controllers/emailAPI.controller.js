@@ -67,12 +67,15 @@ exports.sendEmail = (message) => {
             });
         });
     }
-
+    
+    //prepare and send email
     function sendEmail(auth, message) {
         var gmailClass = google.gmail('v1');
-
+        
+        //initialize email content as array
         var email_lines = [];
-
+        
+        //content of email is inserted into array
         email_lines.push('From: "RakunineCMS" <harditsinghmarwah@gmail.com>');
         email_lines.push('To: hardit@outlook.com');
         email_lines.push('Content-type: text/html;charset=iso-8859-1');
@@ -80,9 +83,12 @@ exports.sendEmail = (message) => {
         email_lines.push('Subject: CMS Report');
         email_lines.push('');
         email_lines.push(message);
-
+        
+        //joins email array into string
         var email = email_lines.join('\r\n').trim();
-
+        
+        //encode email to base 64 before email transfer
+        //to ensure email contents remain intact and not modified
         var base64EncodedEmail = new Buffer(email).toString('base64');
         base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
 
@@ -94,7 +100,8 @@ exports.sendEmail = (message) => {
             }
         });
     }
-
+    
+    //not used
     function prepareEmail(message, data) {
         
     }
