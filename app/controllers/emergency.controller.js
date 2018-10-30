@@ -23,6 +23,7 @@ exports.newEmergency = (req, res) => {
         );
     }
 
+    //Creates new Emergency object if it passes validation
     const emergency = new Emergency({
         name: req.body.name,
         mobile: req.body.mobile,
@@ -33,6 +34,7 @@ exports.newEmergency = (req, res) => {
         status: "Pending"
     });
 
+    //Creates a new SMS message before calling SMS Controller to send it out
     SMSController.sendSMSControler(
         "Name: " + req.body.name +
         "\nMobile Number: " + req.body.mobile +
@@ -42,16 +44,19 @@ exports.newEmergency = (req, res) => {
         "\nhttps://maps.google.com/?q=" + req.body.location.latitude + "," + req.body.location.longitude
     );
 
+    //save the newly created Emergency case into the database
     emergency.save()
         .then(data => {
             res.send(data);
         }).catch(err => {
+            //if an error occurs when inserting data
             res.status(500).send({
                 message: err.message || "Some error occurred while creating the emergency."
             });
         });
 };
 
+//retrives from database all the emergency cases and return it
 exports.findAll = (req, res) => {
     Emergency.find()
         .then(emergencyList => {
@@ -63,27 +68,33 @@ exports.findAll = (req, res) => {
         });
 };
 
+//finds a specific emergency case from database before returning it
 exports.findOne = (req, res) => {
     Emergency.findById(req.params.emergencyID)
         .then(emergency => {
+            //if specific emergency is not found, return with error message
             if (!emergency) {
                 return res.status(404).send({
                     message: "Emergency not found with id " + req.params.emergencyID
                 });
             }
+            //return the requested emergency case
             res.send(emergency);
         }).catch(err => {
+            //if specific emergency is not found, return with error message
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
                     message: "Emergency not found with id " + req.params.emergencyID
                 });
             }
+            //server error when retrieving data
             return res.status(500).send({
                 message: "Error retrieving emergency with id " + req.params.emergencyID
             });
         });
 };
 
+//Receives the name of the emergency to be updated to status "Solved"
 exports.setEmergencyToSolved = (receivedName) => {
     Emergency.findOneAndUpdate({
             name: receivedName
@@ -123,40 +134,50 @@ exports.updateEmergency = (req, res) => {
         })
         .then(emergency => {
             if (!emergency) {
+                //return error message if not found
                 return res.status(404).send({
                     message: "Emergency not found with id " + req.params.emergencyId
                 });
             }
+            //return updated data
             res.send(emergency);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
+                //return error message
                 return res.status(404).send({
                     message: "Emergency not found with id " + req.params.emergencyId
                 });
             }
+            //server error, return error message
             return res.status(500).send({
                 message: "Error updating emergency with id " + req.params.emergencyId
             });
         });
 };
 
+//Finds the specific Emergency from the database and deletes it
 exports.deleteEmergency = (req, res) => {
+    //looks throw the database with the requested ID
     Emergency.findByIdAndRemove(req.params.emergencyID)
         .then(emergency => {
             if (!emergency) {
+                //returns error if not found
                 return res.status(404).send({
                     message: "Emergency not found with id " + req.params.emergencyId
                 });
             }
+            //returns success message
             res.send({
                 message: "Emergency deleted successfully!"
             });
         }).catch(err => {
             if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+                //returns error message
                 return res.status(404).send({
                     message: "Emergency not found with id " + req.params.emergencyId
                 });
             }
+            //server side error, return error message
             return res.status(500).send({
                 message: "Could not delete emergency with id " + req.params.emergencyId
             });
