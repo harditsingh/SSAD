@@ -6,7 +6,7 @@ module.exports = (app) => {
 	const SMSController = require('./app/controllers/sms.controller.js');
 	const EmailController = require('./app/controllers/emailAPI.controller.js');
 
-	const updateInterval = 10 * 1000;
+	const updateInterval = 30 * 60 * 1000;
 
 	// Initializing Databases
 	WeatherDBController.initialize();
