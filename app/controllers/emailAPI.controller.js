@@ -100,8 +100,6 @@ exports.sendEmail = (message) => {
             }
         });
     }
-    
-    //not used
     function prepareEmail(message, data) {
         
     }
