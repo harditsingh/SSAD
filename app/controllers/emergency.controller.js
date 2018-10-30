@@ -3,7 +3,7 @@ const SMSController = require('./sms.controller.js');
 
 exports.newEmergency = (req, res) => {
     //Using Express-Validator to check for errors
-    req.checkBody('name').notEmpty().withMessage("Name is required").isAlpha().withMessage("Name should only contain alphabets");
+    req.checkBody('name').notEmpty().withMessage("Name is required");
     req.checkBody('mobile').notEmpty().withMessage("Mobile is required").isMobilePhone("en-SG").withMessage("Mobile number should be valid");
     req.checkBody('postcode').notEmpty().withMessage("Postal Code is required").isNumeric().withMessage("Postal Code must be numeric").isLength({ min: 6, max: 6 }).withMessage("Postal Code should be valid");
     req.checkBody('bldgNumber').notEmpty().withMessage("Building Number is required").isString();
