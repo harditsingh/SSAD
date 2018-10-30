@@ -5,7 +5,10 @@ exports.newEmergency = (req, res) => {
     //Using Express-Validator to check for errors
     req.checkBody('name').notEmpty().withMessage("Name is required");
     req.checkBody('mobile').notEmpty().withMessage("Mobile is required").isMobilePhone("en-SG").withMessage("Mobile number should be valid");
-    req.checkBody('postcode').notEmpty().withMessage("Postal Code is required").isNumeric().withMessage("Postal Code must be numeric").isLength({ min: 6, max: 6 }).withMessage("Postal Code should be valid");
+    req.checkBody('postcode').notEmpty().withMessage("Postal Code is required").isNumeric().withMessage("Postal Code must be numeric").isLength({
+        min: 6,
+        max: 6
+    }).withMessage("Postal Code should be valid");
     req.checkBody('bldgNumber').notEmpty().withMessage("Building Number is required").isString();
     req.checkBody('emergencyType').notEmpty().withMessage("Emergency Type is required");
     req.checkBody('location').notEmpty().withMessage("Location is required");
@@ -86,18 +89,18 @@ exports.findOne = (req, res) => {
 
 exports.setEmergencyToSolved = (receivedName) => {
     Emergency.findOneAndUpdate({
-            name: receivedName
-        }, {
-            $set: {
-                status: "Solved"
-            }
-        }, {
-            upsert: true
-        }, function (err, doc) {
-            if (err) {
-                throw err;
-            }
-        })
+        name: receivedName
+    }, {
+        $set: {
+            status: "Solved"
+        }
+    }, {
+        upsert: true
+    }, function (err, doc) {
+        if (err) {
+            throw err;
+        }
+    })
 };
 
 
@@ -161,4 +164,25 @@ exports.deleteEmergency = (req, res) => {
                 message: "Could not delete emergency with id " + req.params.emergencyId
             });
         });
+};
+
+exports.emergencyStatistics = (callback) => {
+    let statistics = {
+        "ambulance": 0,
+        "fire": 0,
+        "terrorist": 0,
+        "rescue": 0,
+        "gas": 0,
+    }
+
+    Emergency.find()
+        .then(emergencyList => {
+            emergencyList.forEach(emergency => {
+                let type = emergency.emergencyType
+                if (statistics[type] != undefined) {
+                    statistics[type] += 1;
+                }
+            });
+            callback(statistics);
+        })
 };

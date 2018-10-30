@@ -5,7 +5,23 @@ module.exports = (app) => {
 	const PSIDBController = require('./app/controllers/psiDatabase.controller.js');
 	const SMSController = require('./app/controllers/sms.controller.js');
 	const EmailController = require('./app/controllers/emailAPI.controller.js');
+
+	const EmailBody = require('./pages/report.js')
 	const updateInterval = 30 * 60 * 1000;
+
+	let emergencyStatisticsUpdated = false;
+	let psiStatisticsUpdated = false;
+	let dengueStatisticsUpdated = false;
+
+	let emailData = {
+		"ambulance": 0,
+		"fire": 0,
+		"terrorist": 0,
+		"rescue": 0,
+		"gas": 0,
+		"psi": 0,
+		"dengue": 0
+	}
 
 	// Initializing Databases
 	WeatherDBController.initialize();
@@ -13,11 +29,9 @@ module.exports = (app) => {
 	DengueDBController.initialize();
 
 	// Setting up routes
-	// app.get('/', function(req, res) {
-	// 	res.sendFile(__dirname + '/public/index.html');
-	// });
-
-
+	app.get('/', function(req, res) {
+		res.sendFile(__dirname + '/public/index.html');
+	});
 
 	app.post('/emergency', EmergencyController.newEmergency);
 	app.get('/getEmergencies', EmergencyController.findAll);
@@ -40,6 +54,48 @@ module.exports = (app) => {
 		WeatherDBController.updateDatabase();
 		PSIDBController.updateDatabase();
 		DengueDBController.updateDatabase();
-		EmailController.sendEmail("<b> This is where the report would go. </b>");
+		collectData();
 	}, updateInterval);
+
+	function collectData() {
+		EmergencyController.emergencyStatistics(fillEmergencyData);
+		PSIDBController.psiStatistics(fillPSIData);
+		DengueDBController.dengueStatistics(fillDengueData);
+	}
+
+	function fillEmergencyData(input) {
+		Object.keys(input).forEach(key => {
+			emailData[key] = input[key];
+		});
+		emergencyStatisticsUpdated = true;
+		sendEmail();
+	}
+
+	function fillDengueData(input) {
+		Object.keys(input).forEach(key => {
+			emailData[key] = input[key];
+		});
+		dengueStatisticsUpdated = true;
+		sendEmail();
+	}
+
+	function fillPSIData(input) {
+		Object.keys(input).forEach(key => {
+			emailData[key] = input[key];
+		});
+		psiStatisticsUpdated = true;
+		sendEmail();
+	}
+
+	function sendEmail() {
+		if (psiStatisticsUpdated && dengueStatisticsUpdated && emergencyStatisticsUpdated) {
+			let message = EmailBody.message;
+
+			Object.keys(emailData).forEach(key => {
+				message = message.replace("%" + key + "%", emailData[key]);
+			});
+
+			EmailController.sendEmail(message);
+		}
+	}
 }

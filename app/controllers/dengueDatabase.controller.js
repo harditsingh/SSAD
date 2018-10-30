@@ -26,6 +26,17 @@ exports.getAllStationInformation = (req, res) => {
     });
 }
 
+exports.dengueStatistics = (callback) => {
+    let statistics = {
+        "dengue": 0
+    }
+
+    DengueInformation.find()
+        .then(data => {
+            statistics["dengue"] = data.length;
+            callback(statistics);
+        })
+};
 
 function saveDengueInformation(dengueData) {
     dengueData.forEach(item => {

@@ -47,6 +47,22 @@ exports.getLatestStations = (req, res) => {
         });
 }
 
+exports.psiStatistics = (callback) => {
+    let statistics = {
+        "psi": 0
+    }
+
+    PSIInformation.find()
+        .then(data => {
+            data.forEach(element => {
+                if(element.dataType == "psi_twenty_four_hourly") {
+                    statistics["psi"] = element.values.national;
+                }
+            });
+            callback(statistics);
+        })
+};
+
 function saveStations(stationList) {
     stationList.forEach(element => {
         let station = new PSIStation({

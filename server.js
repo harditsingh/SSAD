@@ -12,29 +12,6 @@ app.use(bodyParser.json());
 
 app.use(expressValidator());
 
-app.set('view engine', 'ejs');
-
-// use res.render to load up an ejs view file
-
-// index page 
-app.get('/', function(req, res) {
-    res.render('../pages/report', {
-		emergencyAmbulance: 1,
-		rescue: 18,
-		fire: 16,
-		gas: 14,
-		terrorist: 12
-	});
-});
-
-console.log(app.render('../pages/report', {
-	emergencyAmbulance: 1,
-	rescue: 18,
-	fire: 16,
-	gas: 14,
-	terrorist: 12
-}));
-
 const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');
 

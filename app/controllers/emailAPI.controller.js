@@ -94,4 +94,8 @@ exports.sendEmail = (message) => {
             }
         });
     }
+
+    function prepareEmail(message, data) {
+        
+    }
 }
