@@ -11,14 +11,17 @@ exports.getDengueData = (callback) => {
         email: "gwang011@e.ntu.edu.sg",
         password: "RakuNine"
     };
-
+    
+    //retrieve data from OneMap api
     fetchData = (url, accessToken) =>
         request({
             url: url + accessToken,
             json: true
         }, function (error, response, body) {
+            //successfully retrieve data from OneMap api
             if (!error && response.statusCode === 200) {
                 var dengue = [];
+                //update data from OneMap api
                 for (x = 1; x < body.SrchResults.length; x++) {
                     var cases = {
                         Description: body.SrchResults[x].DESCRIPTION,
@@ -28,6 +31,7 @@ exports.getDengueData = (callback) => {
                     dengue.push(cases);
                 }
                 callback(dengue, false);
+            //error retrieving data from OneMap api
             } else {
                 callback(null, error);
             }
