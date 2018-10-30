@@ -5,7 +5,6 @@ module.exports = (app) => {
 	const PSIDBController = require('./app/controllers/psiDatabase.controller.js');
 	const SMSController = require('./app/controllers/sms.controller.js');
 	const EmailController = require('./app/controllers/emailAPI.controller.js');
-
 	const updateInterval = 30 * 60 * 1000;
 
 	// Initializing Databases
@@ -14,9 +13,11 @@ module.exports = (app) => {
 	DengueDBController.initialize();
 
 	// Setting up routes
-	app.get('/', function(req, res) {
-		res.sendFile(__dirname + '/public/index.html');
-	});
+	// app.get('/', function(req, res) {
+	// 	res.sendFile(__dirname + '/public/index.html');
+	// });
+
+
 
 	app.post('/emergency', EmergencyController.newEmergency);
 	app.get('/getEmergencies', EmergencyController.findAll);
