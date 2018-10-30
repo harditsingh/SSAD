@@ -4,10 +4,12 @@ module.exports = (app) => {
 	const DengueDBController = require('./app/controllers/dengueDatabase.controller.js');
 	const PSIDBController = require('./app/controllers/psiDatabase.controller.js');
 	const SMSController = require('./app/controllers/sms.controller.js');
+
 	const EmailController = require('./app/controllers/emailAPI.controller.js');
 
 	const EmailBody = require('./pages/report.js')
 	const updateInterval = 30 * 60 * 1000;
+
 
 	let emergencyStatisticsUpdated = false;
 	let psiStatisticsUpdated = false;
@@ -33,6 +35,9 @@ module.exports = (app) => {
 		res.sendFile(__dirname + '/public/index.html');
 	});
 
+
+
+    //all the available http routes
 	app.post('/emergency', EmergencyController.newEmergency);
 	app.get('/getEmergencies', EmergencyController.findAll);
 	app.get('/getEmergency/:emergencyID', EmergencyController.findOne);
@@ -50,6 +55,7 @@ module.exports = (app) => {
 
 	app.post('/processSMS', SMSController.processSMSResponse);
 
+    //Every 30 minutes call the controllers to update their data and to send out report through email
 	setInterval(function () {
 		WeatherDBController.updateDatabase();
 		PSIDBController.updateDatabase();
